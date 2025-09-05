@@ -41,17 +41,24 @@
 git clone <repository-url>
 cd quantitative_analysis
 
-# 安装依赖
-pip install -r requirements.txt
+# 安装依赖（根据需要选择）
+pip install -r requirements-base.txt    # 基础依赖
+pip install -r requirements-ml.txt      # 包含机器学习功能
+pip install -r requirements-dev.txt     # 开发环境
+pip install -r requirements-prod.txt    # 生产环境
 ```
 
 ### 3. 启动系统
 ```bash
-# 使用启动脚本
+# 方式1: 使用主启动文件（推荐）
+python app.py
+
+# 方式2: 使用系统管理器（包含更多功能）
 python run_system.py
 
-# 或者直接运行（推荐）
-python app.py
+# 方式3: 使用系统启动脚本
+./start.sh  # Linux/macOS
+start.bat   # Windows
 ```
 # 遇到以下问题
 ```

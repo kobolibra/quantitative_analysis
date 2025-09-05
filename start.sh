@@ -25,7 +25,11 @@ source venv/bin/activate
 
 # 安装依赖
 echo "📥 安装依赖包..."
-pip install -r requirements.txt
+if [ -f "requirements-ml.txt" ]; then
+    pip install -r requirements-ml.txt
+else
+    pip install -r requirements.txt
+fi
 
 # 检查环境变量文件
 if [ ! -f ".env" ]; then
@@ -130,7 +134,8 @@ echo ""
 echo "🎉 系统准备就绪！"
 echo ""
 echo "📝 启动命令:"
-echo "   python run.py"
+echo "   python app.py          # 简单启动"
+echo "   python run_system.py   # 系统管理器"
 echo ""
 echo "🌐 访问地址:"
 echo "   http://localhost:5000"
@@ -144,5 +149,9 @@ read -p "是否立即启动应用？(y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "🚀 启动应用..."
-    python run.py
+    if [ -f "app.py" ]; then
+        python app.py
+    else
+        python run_system.py
+    fi
 fi 
