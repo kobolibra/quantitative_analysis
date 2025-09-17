@@ -445,8 +445,6 @@ pip install -r requirements_minimal.txt
 如有问题或建议，请通过以下方式联系：
 - 提交Issue
 - 发送邮件：39189996@qq.com
-
-
 ---
 
 **多因子选股系统** - 让量化投资更简单！ 
