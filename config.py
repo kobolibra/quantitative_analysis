@@ -9,14 +9,24 @@ class Config:
     """基础配置类"""
     
     # 数据库配置
-    DB_HOST = os.getenv('DB_HOST', 'localhost')
-    DB_USER = os.getenv('DB_USER', 'root')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', 'root')
-    DB_NAME = os.getenv('DB_NAME', 'stock_cursor')
-    DB_CHARSET = os.getenv('DB_CHARSET', 'utf8mb4')
-    
+    # 数据库配置
+    # 优先从环境变量 DATABASE_URL 中读取完整的数据库连接字符串
+    DATABASE_URL = os.getenv('DATABASE_URL')
+
+    # 如果 DATABASE_URL 存在，则直接使用它
+    if DATABASE_URL:
+        SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    # 如果 DATABASE_URL 不存在，则使用原来的方式拼接，并填入您的数据库信息作为默认值
+    else:
+        DB_HOST = os.getenv('DB_HOST', 'mysql2.sqlpub.com')
+        DB_USER = os.getenv('DB_USER', 'liquidity')
+        DB_PASSWORD = os.getenv('DB_PASSWORD', 'ZvdbAoGQGX0Pki1b')
+        DB_NAME = os.getenv('DB_NAME', 'quantitativeanalysis')
+        DB_CHARSET = os.getenv('DB_CHARSET', 'utf8mb4')
+        # 注意这里拼接时加入了端口号 3307
+        SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:3307/{DB_NAME}?charset={DB_CHARSET}"
+
     # SQLAlchemy配置
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}?charset={DB_CHARSET}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_size': 10,
