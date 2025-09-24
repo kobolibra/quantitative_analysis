@@ -41,3 +41,4 @@ with app.app_context():
         logger.info(f"每日数据更新任务完成: {update_result}")
 
     logger.info("每日数据更新任务执行完毕。")
+
