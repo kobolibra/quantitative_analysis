@@ -13,7 +13,7 @@ with app.app_context():
     logger.info("开始执行每日数据更新任务...")
     
     # 实例化数据管理器
-    # Tushare token将从环境变量中读取
+    # 注意：这里假设Tushare token已通过环境变量设置，否则将使用Baostock
     data_manager = RealtimeDataManager()
     
     # 从数据库获取所有股票代码
