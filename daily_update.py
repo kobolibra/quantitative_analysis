@@ -32,7 +32,7 @@ with app.app_context():
         # 批量同步分钟数据 (使用Baostock)
         update_result = data_manager.sync_multiple_stocks_data(
             ts_codes,
-            period_type=\'1min\',
+            period_type=\"1min\", # 注意这里使用了双引号来避免转义问题
             start_date=start_date,
             end_date=end_date,
             use_baostock=True
