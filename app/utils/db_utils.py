@@ -9,21 +9,33 @@ from sqlalchemy import create_engine, text
 from app.extensions import db
 from config import Config
 import logging
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
 class DatabaseUtils:
     """数据库工具类，支持多种数据库连接方式"""
     
-    # MySQL数据库连接信息（保持原有配置）
-    _mysql_host = Config.DB_HOST
-    _mysql_user = Config.DB_USER
-    _mysql_password = Config.DB_PASSWORD
-    _mysql_database = Config.DB_NAME
-    _mysql_charset = Config.DB_CHARSET
-
     # Tushare API token
     _tushare_token = '0f5df633752254f28597cf54c3e1d3d662400e110cba5fa7edd99c6d'
+
+    @classmethod
+    def _parse_database_uri(cls):
+        """从SQLALCHEMY_DATABASE_URI解析数据库连接信息"""
+        uri = Config.SQLALCHEMY_DATABASE_URI
+        parsed_uri = urlparse(uri)
+        
+        host = parsed_uri.hostname
+        port = parsed_uri.port if parsed_uri.port else 3306 # 默认MySQL端口
+        user = parsed_uri.username
+        password = parsed_uri.password
+        database = parsed_uri.path.lstrip('/')
+        
+        # 从查询参数中获取charset
+        query_params = dict(qp.split('=') for qp in parsed_uri.query.split('&')) if parsed_uri.query else {}
+        charset = query_params.get('charset', 'utf8mb4')
+        
+        return host, port, user, password, database, charset
 
     @classmethod
     def init_tushare_api(cls):
@@ -44,12 +56,14 @@ class DatabaseUtils:
         :return: MySQL连接对象和游标
         """
         try:
+            host, port, user, password, database, charset = cls._parse_database_uri()
             conn = pymysql.connect(
-                host=cls._mysql_host,
-                user=cls._mysql_user,
-                password=cls._mysql_password,
-                database=cls._mysql_database,
-                charset=cls._mysql_charset
+                host=host,
+                user=user,
+                password=password,
+                database=database,
+                charset=charset,
+                port=port
             )
             cursor = conn.cursor()
             logger.info("MySQL数据库连接成功")
@@ -139,4 +153,4 @@ class DatabaseUtils:
             return True
         except Exception as e:
             logger.error(f"创建分钟数据表失败: {e}")
-            return False 
+            return False
