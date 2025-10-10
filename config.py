@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
+from urllib.parse import urlparse, parse_qs
 
 # 加载环境变量
 load_dotenv()
@@ -9,24 +10,34 @@ class Config:
     """基础配置类"""
     
     # 数据库配置
-    # 数据库配置
     # 优先从环境变量 DATABASE_URL 中读取完整的数据库连接字符串
-    DATABASE_URL = os.getenv('DATABASE_URL')
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
-    # 如果 DATABASE_URL 存在，则直接使用它
     if DATABASE_URL:
+        # 如果 DATABASE_URL 存在，则解析它来设置 DB_HOST, DB_USER 等
+        parsed_uri = urlparse(DATABASE_URL)
+        
+        DB_USER = parsed_uri.username
+        DB_PASSWORD = parsed_uri.password
+        DB_HOST = parsed_uri.hostname
+        DB_PORT = parsed_uri.port if parsed_uri.port else 3306 # 默认MySQL端口
+        DB_NAME = parsed_uri.path.lstrip("/")
+        
+        query_params = parse_qs(parsed_uri.query)
+        DB_CHARSET = query_params.get("charset", ["utf8mb4"])[0]
+        
         SQLALCHEMY_DATABASE_URI = DATABASE_URL
-    # 如果 DATABASE_URL 不存在，则使用原来的方式拼接，并填入您的数据库信息作为默认值
     else:
-        DB_HOST = os.getenv('DB_HOST', 'mysql2.sqlpub.com')
-        DB_USER = os.getenv('DB_USER', 'liquidity')
-        DB_PASSWORD = os.getenv('DB_PASSWORD', 'ZvdbAoGQGX0Pki1b')
-        DB_NAME = os.getenv('DB_NAME', 'quantitativeanalysis')
-        DB_CHARSET = os.getenv('DB_CHARSET', 'utf8mb4')
-        # 注意这里拼接时加入了端口号 3307
-        SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:3307/{DB_NAME}?charset={DB_CHARSET}"
+        # 如果 DATABASE_URL 不存在，则使用原来的方式从单独的环境变量或默认值获取
+        DB_HOST = os.getenv("DB_HOST", "mysql2.sqlpub.com")
+        DB_USER = os.getenv("DB_USER", "liquidity")
+        DB_PASSWORD = os.getenv("DB_PASSWORD", "ZvdbAoGQGX0Pki1b")
+        DB_NAME = os.getenv("DB_NAME", "quantitativeanalysis")
+        DB_CHARSET = os.getenv("DB_CHARSET", "utf8mb4")
+        DB_PORT = int(os.getenv("DB_PORT", 3307)) # 确保端口号也被设置
+        
+        SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset={DB_CHARSET}"
 
-    # SQLAlchemy配置
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_size': 10,
@@ -72,7 +83,7 @@ class Config:
             'max_tokens': 2048
         },
         'openai': {
-            'api_key': os.environ.get('OPENAI_API_KEY'),
+            'api_key': os.environ.get('OPENAI_API_KEY' ),
             'model': 'gpt-3.5-turbo',
             'base_url': 'https://api.openai.com/v1',
             'timeout': 60,
@@ -81,7 +92,7 @@ class Config:
         }
     }
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(Config ):
     """开发环境配置"""
     DEBUG = True
 
@@ -94,4 +105,4 @@ config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
-} 
+}
