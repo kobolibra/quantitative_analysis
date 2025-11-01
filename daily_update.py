@@ -1,3 +1,4 @@
+import os
 from app import create_app
 from app.services.realtime_data_manager import RealtimeDataManager
 from app.models.stock_basic import StockBasic
@@ -12,6 +13,10 @@ app = create_app()
 with app.app_context():
     logger.info("开始执行每日数据更新任务...")
     
+    # 从环境变量中获取 period_type，如果没有则默认为 '1min'
+    period_type_env = os.getenv("PERIOD_TYPE", "1min")
+    logger.info(f"使用的数据周期类型: {period_type_env}")
+
     # 实例化数据管理器
     data_manager = RealtimeDataManager()
     
@@ -31,12 +36,12 @@ with app.app_context():
         # 批量同步分钟数据
         update_result = data_manager.sync_multiple_stocks_data(
             ts_codes,
-            period_type='1min',  # 这里使用最简单的普通单引号，确保不再出错
+            period_type=period_type_env,  # 使用从环境变量获取的值
             start_date=start_date,
             end_date=end_date,
             use_baostock=True
         )
         
-        logger.info(f"每日数据更新任务完成: {{update_result}}")
+        logger.info(f"每日数据更新任务完成: {update_result}")
 
     logger.info("每日数据更新任务执行完毕。")
