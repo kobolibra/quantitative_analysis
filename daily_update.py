@@ -13,7 +13,6 @@ with app.app_context():
     logger.info("开始执行每日数据更新任务...")
     
     # 实例化数据管理器
-    # 注意：这里假设Tushare token已通过环境变量设置，否则将使用Baostock
     data_manager = RealtimeDataManager()
     
     # 从数据库获取所有股票代码
@@ -25,20 +24,19 @@ with app.app_context():
     else:
         logger.info(f"将更新 {len(ts_codes)} 只股票的数据。")
         
-        # 定义数据更新的日期范围（例如，更新最近7天的数据）
+        # 定义数据更新的日期范围
         end_date = datetime.now().strftime("%Y-%m-%d")
         start_date = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
         
-        # 批量同步分钟数据 (使用Baostock)
+        # 批量同步分钟数据
         update_result = data_manager.sync_multiple_stocks_data(
-            ts_codes, # 这里是关键，添加了逗号
-            period_type=\'1min\',
+            ts_codes,
+            period_type='1min',  # 这里使用最简单的普通单引号，确保不再出错
             start_date=start_date,
             end_date=end_date,
             use_baostock=True
         )
         
-        logger.info(f"每日数据更新任务完成: {update_result}")
+        logger.info(f"每日数据更新任务完成: {{update_result}}")
 
     logger.info("每日数据更新任务执行完毕。")
-
