@@ -18,9 +18,6 @@ class DatabaseUtils:
     # Tushare API token
     _tushare_token = '0f5df633752254f28597cf54c3e1d3d662400e110cba5fa7edd99c6d'
 
-    # 数据库连接信息（直接从Config获取，不再在类加载时静态获取）
-    # 这些属性将在connect_to_mysql等方法中动态获取，以确保Config已完全加载
-
     @classmethod
     def init_tushare_api(cls):
         """
@@ -40,7 +37,7 @@ class DatabaseUtils:
         :return: MySQL连接对象和游标
         """
         try:
-            # 动态获取Config中的数据库连接信息
+            # 在方法内部动态获取Config属性，确保Config已完全加载
             conn = pymysql.connect(
                 host=Config.DB_HOST,
                 user=Config.DB_USER,
