@@ -15,16 +15,11 @@ logger = logging.getLogger(__name__)
 class DatabaseUtils:
     """数据库工具类，支持多种数据库连接方式"""
     
-    # MySQL数据库连接信息（直接从Config获取）
-    _mysql_host = Config.DB_HOST
-    _mysql_user = Config.DB_USER
-    _mysql_password = Config.DB_PASSWORD
-    _mysql_database = Config.DB_NAME
-    _mysql_charset = Config.DB_CHARSET
-    _mysql_port = Config.DB_PORT # 添加端口号
-
     # Tushare API token
     _tushare_token = '0f5df633752254f28597cf54c3e1d3d662400e110cba5fa7edd99c6d'
+
+    # 数据库连接信息（直接从Config获取，不再在类加载时静态获取）
+    # 这些属性将在connect_to_mysql等方法中动态获取，以确保Config已完全加载
 
     @classmethod
     def init_tushare_api(cls):
@@ -45,13 +40,14 @@ class DatabaseUtils:
         :return: MySQL连接对象和游标
         """
         try:
+            # 动态获取Config中的数据库连接信息
             conn = pymysql.connect(
-                host=cls._mysql_host,
-                user=cls._mysql_user,
-                password=cls._mysql_password,
-                database=cls._mysql_database,
-                charset=cls._mysql_charset,
-                port=cls._mysql_port
+                host=Config.DB_HOST,
+                user=Config.DB_USER,
+                password=Config.DB_PASSWORD,
+                database=Config.DB_NAME,
+                charset=Config.DB_CHARSET,
+                port=Config.DB_PORT
             )
             cursor = conn.cursor()
             logger.info("MySQL数据库连接成功")
