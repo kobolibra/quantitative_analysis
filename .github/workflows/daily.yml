@@ -1,18 +1,28 @@
-name: daily_update
+name: Daily Market Data Update
+
 on:
   schedule:
-    - cron: '5 10 * * *'      # 北京时间 18:05
+    - cron: '5 10 * * *' # Runs at 10:05 UTC, which is 18:05 Beijing Time
+  workflow_dispatch: # Allows manual triggering
+
 jobs:
-  run:
+  run-daily-update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - run: pip install -r requirements.txt
-      - name: Run python daily_update.py
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run daily update script
         run: python daily_update.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          PERIOD_TYPE: '1min' # 在这里定义周期类型字符串
+          # 使用双引号来定义字符串，避免GitHub编辑器的自动转义问题
+          PERIOD_TYPE: "1min"
