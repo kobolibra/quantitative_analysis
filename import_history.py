@@ -45,9 +45,9 @@ def main():
                 stock_basic = StockBasic(
                     ts_code=stock_data[0],
                     name=stock_data[1],
-                    area=\'
-                    industry=\'
-                    market=\'
+                    area='',
+                    industry='',
+                    market='',
                     list_date=stock_data[3]
                 )
                 db.session.add(stock_basic)
