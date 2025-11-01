@@ -11,6 +11,8 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
-      - run: python daily_update.py
+      - name: Run python daily_update.py
+        run: python daily_update.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PERIOD_TYPE: '1min' # 在这里定义周期类型字符串
