@@ -58,9 +58,11 @@ def fetch_stock_data(ts_code, start_date):
     try:
         rs = bs.query_history_k_data_plus(
             code=ts_code,
+            fields="date,code,open,high,low,close,volume,amount,pctChg",
             start_date=start_date,
             end_date=datetime.now().strftime("%Y-%m-%d"),
-            frequency="d"  # 日线
+            frequency="d",  # 日线
+            adjustflag="3"  # 不复权
         )
         data_list = []
         while (rs.error_code == '0') & rs.next():
