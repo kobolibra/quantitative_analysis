@@ -1,3 +1,13 @@
+flask
+flask-cors
+flask-sqlalchemy
+pymysql
+baostock
+pandas
+gunicorn
+eventlet
+flask-socketio
+
 # Web框架
 Flask>=2.3.0
 Flask-RESTful>=0.3.10
