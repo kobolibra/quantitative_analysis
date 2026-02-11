@@ -30,9 +30,11 @@ def create_app(config_name='default'):
     from app.api.realtime_risk import realtime_risk_bp
     from app.api.realtime_report import realtime_report_bp
     from app.api.websocket_api import websocket_api_bp
+    from app.api.admin_api import admin_bp
     from app.routes.ml_factor_routes import ml_factor_routes
     from app.routes.realtime_analysis_routes import realtime_analysis_routes
     app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
     app.register_blueprint(ml_factor_bp)
     app.register_blueprint(text2sql_bp)
     app.register_blueprint(realtime_analysis_bp)
