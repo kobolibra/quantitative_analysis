@@ -4,9 +4,45 @@
 
 ### 本系统目前项目未完成开发，仅限于学习交流，需要二次开发或定制化开发，请联系 39189996@qq.com
 
+### 后续开发
+- 完善因子构建
+- 完善基础策略开发
+- 完成简单回测
+- 缺少实时数据接口，实时监测部分暂时开发不了
+
+### 新版本开发中，演示地址：http://223.4.156.201:5173/
+
 ### 数据库下载地址：
--- 通过网盘分享的文件：stock_cursor.sql.zip
--- 链接: https://pan.baidu.com/s/1vOtkLP8pQEU8k0pGRaYwUw?pwd=q4mg 提取码: q4mg
+-- 数据更新到2026年02月13日，包含历史行情、基本面、技术面、资金流入、筹码分布。
+-- 通过网盘分享的文件：stock_data_20260213.zip
+链接: https://pan.baidu.com/s/1XYMvl_OAnFycV8bOBkyQ0g?pwd=ctfq 提取码: ctfq
+-- 如果有tushare接口，可以直接通过 quantitative_analysis/app/utils 目录下的文件直接下载，例如：
+```
+# 下载历史行情数据：
+# 首先进入下载工具的目录
+cd app/utils
+
+# tushare数据下载
+# 先下载交易日期数据，所有下载数据接口都依赖这个文件
+python trade_calendar.py
+
+# 下载所有股票列表，所有按股票代码下载的数据接口都依赖这个文件
+python stock_basic.py
+
+# 运行历史数据，根据自己的需要，修改下载日期，代码在第33-34行，例如：
+   and cal_date >= '2025-01-01' 
+    and cal_date <= '2025-12-31'
+# 然后运行，下载天数越多，下载时间越长
+python daily_history_by_date.py
+
+# baostock 数据下载
+
+# 日线
+python baostock_daily.py
+
+# 分钟线 min5.py min15.py min30.py min60.py
+python min5.py
+```
 
 ![系统主界面](./images/1-2.png)
 
@@ -307,10 +343,10 @@ stock_analysis/
 在 `config.py` 中修改数据库连接：
 
 ```python
-# SQLite (默认)
+# SQLite（不建议使用，数据太大，速度较慢）
 SQLALCHEMY_DATABASE_URI = 'sqlite:///stock_analysis.db'
 
-# MySQL
+# MySQL (默认，建议用MySQL)
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://user:password@localhost/stock_analysis'
 ```
 
@@ -385,8 +421,6 @@ python quick_start_fixed.py
 # 或使用最小化依赖
 pip install -r requirements_minimal.txt
 ```
-
-详细解决方案请查看：[安装指南](INSTALL_GUIDE.md)
 
 ### 常见问题
 
